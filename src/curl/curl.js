@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { getURL, getHeaders, getBody, getMethod } from "./utils.js";
+import { getURL, getHeaders, getBody, getMethod } from './utils.js';
 
 export const curl = async ([curlString]) => {
   const url = getURL(curlString);
