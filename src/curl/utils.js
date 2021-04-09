@@ -3,7 +3,7 @@ const breakLines = (curlString = '') => curlString.split(/\s{2,}/g).map(line => 
 export const getURL = (curlString) => {
   const lines = breakLines(curlString);
   const matchURL = (line) => line.startsWith('curl');
-  const clearLineURL = (line) => line.replace(/^curl '(.*)'$/, '$1');
+  const clearLineURL = (line) => line.replace(/^curl '?([^']*)'?$/, '$1');
 
   return lines
     .filter(matchURL)
@@ -35,10 +35,20 @@ export const getBody = (curlString) => {
 };
 
 export const getMethod = (curlString, hasBody) => {
+  const lines = breakLines(curlString);
+  const matchMethod = (line) => line.startsWith('-X');
+  const clearLineMethod = (line) => line.replace(/^-X '(.*)'$/, '$1');
+  const normalizeLineMethood = (line) => line.toLowerCase();
   let method = 'get';
 
-  if (hasBody) {
-    method = 'post';
+  const methodsSearched = lines.filter(matchMethod);
+
+  if (methodsSearched && methodsSearched.length > 0) {
+    method = methodsSearched.map(clearLineMethod).map(normalizeLineMethood)[0];
+  } else {
+    if (hasBody) {
+      method = 'post';
+    }
   }
 
   return method;
